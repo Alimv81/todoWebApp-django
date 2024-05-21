@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title_block %}
+	your tasks list
+{% endblock %}
+
+{% block content_block %}
+    <h2>My Tasks</h2>
+    <a href="{% url 'Tasks:task-create' %}">Create new task</a>
+    
+    {% if show_done %}
+    <h2>
+        showing all tasks done/not done
+    </h2>
+      <form method ="post" action="{% url 'Tasks:task-list' 0 %}">
+        {% csrf_token %}
+        <button type="submit">show not done</button>
+      </form>
+    {% else %}
+      <h2>
+        showing done tasks
+      </h2>
+      <form method ="post" action="{% url 'Tasks:task-list' 1 %}">
+        {% csrf_token %}
+        <button type="submit">show all</button>
+      </form>
+    {% endif %} 
+    
+    <ul>
+    {% for task in task_list %}
+      <li style="display-inside: ruby; list-style: none">
+          <a href="{% url 'Tasks:task-update' task.pk %}">{{ task.title }}</a>
+              <label>
+                  <input disabled type="checkbox" name="task_{{ task.id }}" {% if task.is_done %}checked{% endif %}/>
+              </label>
+      
+          <form method="get" action="{% url 'Tasks:task-delete' task.pk %}">
+          {% csrf_token %}
+          <button type="submit">Delete</button>
+          </form>
+      </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
